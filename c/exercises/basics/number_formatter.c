@@ -26,19 +26,20 @@
 
 // declarations
 int get_extra_format_char_count(int);
-char* get_formatted_integer_string(lli, char*, int);
+void get_formatted_integer_string(lli, char *, int);
 int get_num_of_digits_in_integer(lli);
-
+int get_digit_count_of_frac_part(double);
+void get_formatted_double_string(char *, int, double, char *, int);
 // definitions
 
 void format_lli(lli number) {
   // 1,000 1,00,000 -24,000 13,245.45
-  printf("original number: %lld\n", number);
+  // printf("original number: %lld\n", number);
 
   int length = get_num_of_digits_in_integer(number);
   char formatted_number[length];
   get_formatted_integer_string(number, formatted_number, length);
-  printf("%s\n", formatted_number);
+  // printf("%s\n", formatted_number);
 }
 
 void format_double(double number) {
@@ -52,15 +53,57 @@ void format_double(double number) {
   char formatted_number[length];
   get_formatted_integer_string(number, formatted_number, length);
 
+  int frac_length = get_digit_count_of_frac_part(double_part);
+  int updated_length = length + frac_length + 1; // 1 for the decimal point
+  char formatted_frac_number[updated_length];
   printf("%lf\n", double_part);
+
+  get_formatted_double_string(formatted_number, length, double_part,
+                              formatted_frac_number, updated_length);
 }
 
-char* get_formatted_integer_string(lli num, char* formatted_number, int length) {
+void get_formatted_double_string(char *formatted_integer,
+                                 int formatted_integer_length,
+                                 double double_part,
+                                 char *formatted_frac_number, int length) {
+  for (int i = 0; i < formatted_integer_length; i++) {
+    formatted_frac_number[i] = formatted_integer[i];
+  }
+
+  formatted_frac_number[formatted_integer_length] = '.';
+
+  // Double is handled different in c. in fractions, so its not possible to
+  // print it like this, snprintf can work but again you need to specify the
+  // precision. another way is to take in input as a string and then process
+  // it..
+  /* for (int i = formatted_integer_length + 1; i < length; i++) {
+    int inserted_frac = (int)(double_part * 10 + ASCII_ZERO_DEC);
+    // printf("i: %d, frac digit: %d\n", i, inserted_frac);
+
+    formatted_frac_number[i] = inserted_frac;
+    double_part *= 10;
+  } */
+
+  // 0.1001
+  printf("%d", length);
+  int i = formatted_integer_length;
+  double frac_part_copy = double_part;
+  while (frac_part_copy != 0.0) {
+    double tmp = frac_part_copy * 10;
+    int tmp_int = (int)tmp;
+    formatted_frac_number[i++] = tmp_int + ASCII_ZERO_DEC;
+    frac_part_copy -= tmp_int;
+  }
+
+  printf("formatted fraction: %s\n", formatted_frac_number);
+}
+
+void get_formatted_integer_string(lli num, char *formatted_number, int length) {
   lli tmp_num = num;
-  printf("tmp num: %lld length: %d\n", tmp_num, length);
+  // printf("tmp num: %lld length: %d\n", tmp_num, length);
   int format_char_index = 4; // for integers: ,xyz'\0'
   for (int i = length; i >= 0; i--) {
-    printf("i: %d\n", i);
+    // printf("i: %d\n", i);
     if (i == length) {
       formatted_number[i] = '\0';
       continue;
@@ -69,13 +112,26 @@ char* get_formatted_integer_string(lli num, char* formatted_number, int length) 
       formatted_number[i] = FORMAT_CHAR;
       format_char_index += 3;
     } else {
-      printf("%dth iter: %lld\n", i, tmp_num % 10);
+      // printf("%dth iter: %lld\n", i, tmp_num % 10);
       formatted_number[i] = (tmp_num % 10) + ASCII_ZERO_DEC;
       tmp_num /= 10;
     }
   }
+}
 
-  return formatted_number;
+int get_digit_count_of_frac_part(double frac_part) {
+  int length = 0;
+  while (frac_part != 0.0) {
+    printf("%lf\n", frac_part);
+    // 1.23
+    // TODO: fix this. fractional digits are stored as binary in c. research and
+    // write an article.
+    double stepped_up_number = frac_part * 10;
+    frac_part = stepped_up_number - (lli)stepped_up_number;
+    length++;
+  }
+
+  return length;
 }
 
 int get_num_of_digits_in_integer(lli num) {
@@ -86,10 +142,10 @@ int get_num_of_digits_in_integer(lli num) {
     digits++;
     tmp_num /= 10;
   }
-  printf("digits: %d\n", digits);
+  // printf("digits: %d\n", digits);
 
   int extra_chars = get_extra_format_char_count(digits);
-  printf("extra_chars: %d\n", extra_chars);
+  // printf("extra_chars: %d\n", extra_chars);
 
   int length = digits + extra_chars; // 0 to length
   return length;
