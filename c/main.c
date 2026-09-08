@@ -1,8 +1,6 @@
-#include <stdio.h>
-#include "simple_calc.h"
+#include "str_reverser.h"
 
-int main(int argc, char** argv) {
-  check_input(argc, argv);
-
+int main() {
+  reverse("hello world");
   return 0;
 }
