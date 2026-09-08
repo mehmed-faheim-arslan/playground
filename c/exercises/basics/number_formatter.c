@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "number_formatter.h"
 
@@ -26,23 +27,32 @@
 
 // declarations
 int get_extra_format_char_count(int);
-void get_formatted_integer_string(lli, char *, int);
+void get_formatted_integer_string(lli, char*, int);
 int get_num_of_digits_in_integer(lli);
 int get_digit_count_of_frac_part(double);
 void get_formatted_double_string(char *, int, double, char *, int);
-// definitions
 
-void format_lli(lli number) {
+int get_str_length(char* str);
+void get_formatted_output(char*, char*, int, bool);
+
+// definitions
+char* format_lli(char* number) {
   // 1,000 1,00,000 -24,000 13,245.45
   // printf("original number: %lld\n", number);
+  int len = get_str_length(number);
+  char output_buffer[len]; // TODO: make buffer size include ,
+  get_formatted_output(number, output_buffer, len, false);
 
-  int length = get_num_of_digits_in_integer(number);
-  char formatted_number[length];
-  get_formatted_integer_string(number, formatted_number, length);
+  return "123";
+  // int length = get_num_of_digits_in_integer(number);
+  // char formatted_number[length];
+  // get_formatted_integer_string(number, formatted_number, length);
   // printf("%s\n", formatted_number);
 }
 
-void format_double(double number) {
+char* format_double(char* number) {
+  /*
+
   printf("in format_double func: %lf\n", number);
   // get the int part.
   long long int integer_part = number;
@@ -60,6 +70,8 @@ void format_double(double number) {
 
   get_formatted_double_string(formatted_number, length, double_part,
                               formatted_frac_number, updated_length);
+  */
+  return number;
 }
 
 void get_formatted_double_string(char *formatted_integer,
@@ -134,6 +146,38 @@ int get_digit_count_of_frac_part(double frac_part) {
   return length;
 }
 
+int get_str_length(char* str) {
+   int len = 0, i = 0;
+   while (str[i++] != '\0') {
+     len++;
+   }
+   return len;
+}
+
+void get_formatted_output(char* number_str, char* buffer, int length, bool is_frac) {
+  printf("in get_formatted_output\n");
+  printf("%s, %s, %d\n", number_str, buffer, length);
+  int idx = length;
+  buffer[idx--] = '\0';  // set eos
+
+  if (is_frac) {
+  // TODO
+  }
+
+  int comma_idx = 0;
+  for (; idx >= 0; idx--, comma_idx++) {
+    // TODO: insert comma every 3 digits
+    if (comma_idx != 0 && comma_idx % 3 == 0) {
+      buffer[idx] = ',';
+    }
+    // TODO: check below line, if idx syncs between the two strings
+    buffer[idx] = number_str[idx];
+  }
+
+  printf("%s\n", buffer);
+
+}
+
 int get_num_of_digits_in_integer(lli num) {
   // find number of digits
   lli tmp_num = num;
@@ -172,4 +216,17 @@ int get_extra_format_char_count(int digits) {
   }
 
   return (digits / 2) - 1;
+}
+
+char *convert(lli number, char *buffer, int base) {
+  // base check
+
+  if (number == 0) {
+    return 0;
+  }
+
+  // TODO: dummy return
+  int i = base;
+  i = i + 10;
+  return buffer;
 }

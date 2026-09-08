@@ -1,12 +1,8 @@
-#include "exercises/basics/number_formatter.h"
+#include <stdio.h>
+#include "simple_calc.h"
 
-typedef long long int lli;
-
-int main() {
-  lli num_lli = 5536669205;
-  double num_double = 1234.342342;
-  FORMAT(num_lli);
-  FORMAT(num_double);
+int main(int argc, char** argv) {
+  check_input(argc, argv);
 
   return 0;
 }

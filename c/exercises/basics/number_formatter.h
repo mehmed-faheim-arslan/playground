@@ -6,16 +6,9 @@
 
 typedef long long int lli;
 
-#define FORMAT(N)           \
-  _Generic( (N),            \
-    int    : format_lli,    \
-    long   : format_lli,    \
-    lli    : format_lli,    \
-    float  : format_double, \
-    double : format_double  \
-  )( (N) )
+char* format_lli(char*);
+char* format_double(char*);
 
-void format_lli(lli number);
-void format_double(double number);
+char* convert(lli, char*, int);
 
 #endif // NUMBER_FORMATTER_H_
